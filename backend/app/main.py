@@ -8,7 +8,7 @@ from app.database.base import Base
 from app.database.session import engine, AsyncSessionLocal
 from app.models import Task, TaskType, EnergyLevel, FocusLevel, CostType, LocationRequirement
 from app.services.task_service import TaskService
-from app.routers import health, tasks, recommendations, sessions
+from app.routers import health, tasks, recommendations, sessions, budget, activities
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -90,6 +90,8 @@ app.include_router(health.router, prefix="/api")
 app.include_router(tasks.router, prefix="/api")
 app.include_router(recommendations.router, prefix="/api")
 app.include_router(sessions.router, prefix="/api")
+app.include_router(budget.router, prefix="/api")
+app.include_router(activities.router, prefix="/api")
 
 @app.get("/")
 async def root():

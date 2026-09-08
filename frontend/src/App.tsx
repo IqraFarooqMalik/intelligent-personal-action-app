@@ -4,11 +4,13 @@ import { QuickCaptureModal } from './components/capture/QuickCaptureModal';
 import { RecommendationView } from './components/recommend/RecommendationView';
 import { TaskListView } from './components/tasks/TaskListView';
 import { ActiveSessionView } from './components/session/ActiveSessionView';
+import { RecoveryView } from './components/recovery/RecoveryView';
+import { BudgetView } from './components/budget/BudgetView';
 import { api } from './api/client';
 import { Task, ActiveSession } from './types';
 
 export function App() {
-  const [activeTab, setActiveTab] = useState<'recommend' | 'tasks' | 'recovery' | 'session'>('recommend');
+  const [activeTab, setActiveTab] = useState<'recommend' | 'tasks' | 'recovery' | 'budget' | 'session'>('recommend');
   const [isCaptureOpen, setIsCaptureOpen] = useState(false);
   const [activeSession, setActiveSession] = useState<ActiveSession | null>(null);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
@@ -74,10 +76,13 @@ export function App() {
       )}
 
       {activeTab === 'recovery' && (
-        <TaskListView
+        <RecoveryView
           onStartSession={handleStartSession}
-          refreshTrigger={refreshTrigger}
         />
+      )}
+
+      {activeTab === 'budget' && (
+        <BudgetView />
       )}
 
       {activeTab === 'session' && (

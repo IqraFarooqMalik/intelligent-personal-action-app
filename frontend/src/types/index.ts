@@ -93,3 +93,21 @@ export interface ActiveSession {
   resume_note?: string | null;
   task?: Task | null;
 }
+
+export interface Expense {
+  id: number;
+  title: string;
+  amount: number;
+  category: string;
+  task_id?: number | null;
+  created_at: string;
+}
+
+export interface BudgetSummary {
+  monthly_budget: number;
+  currency: string;
+  spent_this_month: number;
+  remaining_budget: number;
+  planned_purchases_total: number;
+  recent_expenses: Expense[];
+}

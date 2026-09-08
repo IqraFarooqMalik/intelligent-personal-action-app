@@ -53,6 +53,25 @@ export const RecommendationView: React.FC<RecommendationViewProps> = ({
     setState(updated);
   };
 
+  const [naturalQuery, setNaturalQuery] = useState('');
+  const [isParsingQuery, setIsParsingQuery] = useState(false);
+
+  const handleNaturalQuerySubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!naturalQuery.trim() || isParsingQuery) return;
+    setIsParsingQuery(true);
+    try {
+      const parsed = await api.parseNaturalState(naturalQuery);
+      setState(parsed);
+      fetchRecommendation(parsed);
+      setNaturalQuery('');
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsParsingQuery(false);
+    }
+  };
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
       {/* State Filter Bar (Minimal & Compact) */}
@@ -69,6 +88,33 @@ export const RecommendationView: React.FC<RecommendationViewProps> = ({
             <RefreshCw size={14} />
           </button>
         </div>
+
+        {/* Natural Language State Query Input */}
+        <form onSubmit={handleNaturalQuerySubmit} style={{ marginBottom: '14px', display: 'flex', gap: '6px' }}>
+          <input
+            type="text"
+            placeholder="How are you feeling? (e.g. Tired, 20m, need a break)"
+            value={naturalQuery}
+            onChange={(e) => setNaturalQuery(e.target.value)}
+            style={{
+              flex: 1,
+              padding: '8px 12px',
+              borderRadius: 'var(--radius-pill)',
+              background: 'rgba(255, 255, 255, 0.04)',
+              border: '1px solid var(--border-subtle)',
+              color: 'var(--text-primary)',
+              fontSize: '0.85rem',
+            }}
+          />
+          <button
+            type="submit"
+            className="btn btn-secondary"
+            disabled={!naturalQuery.trim() || isParsingQuery}
+            style={{ padding: '6px 14px', fontSize: '0.8rem' }}
+          >
+            {isParsingQuery ? 'Analyzing...' : 'Parse'}
+          </button>
+        </form>
 
         {/* Energy selector */}
         <div style={{ display: 'flex', gap: '8px', marginBottom: '12px', flexWrap: 'wrap' }}>

@@ -199,3 +199,66 @@ class AIInferenceService:
         """Placeholder for external structured LLM call (Gemini or OpenAI)"""
         # In this implementation, returns heuristics if API is unreachable
         return cls._infer_heuristics(title, execution_context)
+
+    @classmethod
+    def parse_natural_language_state(cls, text: str) -> Dict[str, Any]:
+        """Convert natural-language state input into structured capacity values"""
+        lower = text.lower()
+
+        # 1. Energy
+        energy = EnergyLevel.MEDIUM
+        if any(w in lower for w in ["tired", "exhausted", "drained", "sleepy", "low energy", "burned out", "lazy"]):
+            energy = EnergyLevel.LOW
+        elif any(w in lower for w in ["motivated", "high energy", "pumped", "wired", "ready to work", "focused"]):
+            energy = EnergyLevel.HIGH
+
+        # 2. Focus
+        focus = FocusLevel.MEDIUM
+        if any(w in lower for w in ["scattered", "brain fog", "foggy", "distracted", "can't focus", "low focus"]):
+            focus = FocusLevel.LOW
+        elif any(w in lower for w in ["sharp", "deep focus", "zoned in", "creative"]):
+            focus = FocusLevel.HIGH
+
+        # 3. Social Battery
+        social = SocialLevel.NONE
+        if any(w in lower for w in ["no people", "don't want to talk", "alone", "quiet", "introvert"]):
+            social = SocialLevel.NONE
+        elif any(w in lower for w in ["social", "with friends", "talk", "people", "outgoing"]):
+            social = SocialLevel.HIGH
+
+        # 4. Available Time
+        available_time = 30
+        time_min_match = re.search(r'(\d+)\s*(?:min|minute|minutes)', lower)
+        time_hour_match = re.search(r'(\d+(?:\.\d+)?)\s*(?:h|hr|hour|hours)', lower)
+        if time_min_match:
+            available_time = int(time_min_match.group(1))
+        elif time_hour_match:
+            available_time = int(float(time_hour_match.group(1)) * 60)
+        elif "quick" in lower:
+            available_time = 15
+
+        # 5. Budget constraint
+        spending_allowed = True
+        if any(w in lower for w in ["free", "no money", "spend nothing", "broke", "zero cost"]):
+            spending_allowed = False
+
+        # 6. Mode
+        mode = "BEST_MATCH"
+        if any(w in lower for w in ["recover", "rest", "tired", "recharge", "break"]):
+            mode = "RECOVERY"
+        elif any(w in lower for w in ["surprise", "random"]):
+            mode = "SURPRISE_ME"
+        elif any(w in lower for w in ["quick", "short", "fast"]):
+            mode = "QUICK_WIN"
+        elif any(w in lower for w in ["easy", "low effort", "simple"]):
+            mode = "LOW_EFFORT"
+
+        return {
+            "energy": energy,
+            "focus": focus,
+            "social_battery": social,
+            "available_time_minutes": available_time,
+            "spending_allowed": spending_allowed,
+            "current_location": LocationRequirement.HOME,
+            "mode": mode
+        }

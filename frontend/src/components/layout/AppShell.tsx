@@ -1,10 +1,9 @@
-import React from 'react';
-import { Compass, CheckSquare, Heart, Clock, Plus, Zap } from 'lucide-react';
+import { Compass, CheckSquare, Heart, Clock, Plus, Zap, DollarSign } from 'lucide-react';
 import { ActiveSession } from '../../types';
 
 interface AppShellProps {
-  activeTab: 'recommend' | 'tasks' | 'recovery' | 'session';
-  setActiveTab: (tab: 'recommend' | 'tasks' | 'recovery' | 'session') => void;
+  activeTab: 'recommend' | 'tasks' | 'recovery' | 'budget' | 'session';
+  setActiveTab: (tab: 'recommend' | 'tasks' | 'recovery' | 'budget' | 'session') => void;
   onOpenCapture: () => void;
   activeSession: ActiveSession | null;
   children: React.ReactNode;
@@ -91,7 +90,6 @@ export const AppShell: React.FC<AppShellProps> = ({
             onClick={onOpenCapture}
             className="btn btn-secondary"
             style={{
-              display: 'none',
               padding: '6px 14px',
               fontSize: '0.85rem',
             }}
@@ -123,7 +121,7 @@ export const AppShell: React.FC<AppShellProps> = ({
           className={`bottom-nav-item ${activeTab === 'recommend' ? 'active' : ''}`}
           onClick={() => setActiveTab('recommend')}
         >
-          <Compass size={22} />
+          <Compass size={20} />
           <span>Recommend</span>
         </button>
 
@@ -131,7 +129,7 @@ export const AppShell: React.FC<AppShellProps> = ({
           className={`bottom-nav-item ${activeTab === 'tasks' ? 'active' : ''}`}
           onClick={() => setActiveTab('tasks')}
         >
-          <CheckSquare size={22} />
+          <CheckSquare size={20} />
           <span>Library</span>
         </button>
 
@@ -139,15 +137,23 @@ export const AppShell: React.FC<AppShellProps> = ({
           className={`bottom-nav-item ${activeTab === 'recovery' ? 'active' : ''}`}
           onClick={() => setActiveTab('recovery')}
         >
-          <Heart size={22} />
+          <Heart size={20} />
           <span>Recovery</span>
+        </button>
+
+        <button
+          className={`bottom-nav-item ${activeTab === 'budget' ? 'active' : ''}`}
+          onClick={() => setActiveTab('budget')}
+        >
+          <DollarSign size={20} />
+          <span>Budget</span>
         </button>
 
         <button
           className={`bottom-nav-item ${activeTab === 'session' ? 'active' : ''}`}
           onClick={() => setActiveTab('session')}
         >
-          <Clock size={22} />
+          <Clock size={20} />
           <span>Session</span>
         </button>
       </nav>

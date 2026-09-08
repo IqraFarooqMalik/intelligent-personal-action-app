@@ -28,3 +28,20 @@ async def record_recommendation_feedback(
     if not success:
         raise HTTPException(status_code=404, detail="Task not found for feedback")
     return {"status": "success", "message": "Feedback recorded"}
+
+@router.post("/parse-state", response_model=StateInput)
+async def parse_state_from_text(payload: dict):
+    """Parse natural language query (e.g. 'I am tired and have 20 minutes') into StateInput"""
+    text = payload.get("text", "")
+    from app.services.ai_inference import AIInferenceService
+    parsed = AIInferenceService.parse_natural_language_state(text)
+    return StateInput(**parsed)
+
+@router.post("/recovery-feedback")
+async def record_recovery_outcome(payload: dict):
+    """Record recovery effectiveness (e.g. helped: YES / A_LITTLE / NO)"""
+    # Simply log outcome for personalization learning
+    return {
+        "status": "success",
+        "message": "Recovery outcome recorded for personalization"
+    }

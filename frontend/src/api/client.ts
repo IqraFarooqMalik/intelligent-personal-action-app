@@ -128,5 +128,60 @@ export const api = {
     });
     if (!res.ok) throw new Error('Failed to route impulse');
     return res.json();
+  },
+
+  // Budget & Expenses
+  async getBudgetSummary(): Promise<any> {
+    const res = await fetch(`${API_BASE}/budget/summary`);
+    if (!res.ok) throw new Error('Failed to fetch budget summary');
+    return res.json();
+  },
+
+  async logExpense(title: string, amount: number, category: string = 'General', task_id?: number): Promise<any> {
+    const res = await fetch(`${API_BASE}/budget/expenses`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title, amount, category, task_id }),
+    });
+    if (!res.ok) throw new Error('Failed to log expense');
+    return res.json();
+  },
+
+  async updateBudgetSettings(monthly_budget: number, currency: string = 'EUR'): Promise<any> {
+    const res = await fetch(`${API_BASE}/budget/settings`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ monthly_budget, currency }),
+    });
+    if (!res.ok) throw new Error('Failed to update budget');
+    return res.json();
+  },
+
+  // Natural Language State Parsing
+  async parseNaturalState(text: string): Promise<StateInput> {
+    const res = await fetch(`${API_BASE}/recommendations/parse-state`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text }),
+    });
+    if (!res.ok) throw new Error('Failed to parse state');
+    return res.json();
+  },
+
+  // Recovery & Activities
+  async getRecoveryActivities(): Promise<Task[]> {
+    const res = await fetch(`${API_BASE}/activities/recovery`);
+    if (!res.ok) throw new Error('Failed to fetch recovery activities');
+    return res.json();
+  },
+
+  async recordRecoveryFeedback(task_id: number, helped: string): Promise<any> {
+    const res = await fetch(`${API_BASE}/recommendations/recovery-feedback`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ task_id, helped }),
+    });
+    if (!res.ok) throw new Error('Failed to record recovery feedback');
+    return res.json();
   }
 };
