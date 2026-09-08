@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { CheckSquare, Square, Trash2, Clock, Zap, ChevronDown, ChevronUp, Play, Check } from 'lucide-react';
+import { CheckSquare, Square, Trash2, Clock, Zap, ChevronDown, ChevronUp, Play, Check, Edit3 } from 'lucide-react';
 import { api } from '../../api/client';
 import { Task, TaskStep } from '../../types';
+import { TaskDetailsModal } from './TaskDetailsModal';
 
 interface TaskListViewProps {
   onStartSession: (task: Task) => void;
@@ -15,6 +16,7 @@ export const TaskListView: React.FC<TaskListViewProps> = ({
   const [tasks, setTasks] = useState<Task[]>([]);
   const [filter, setFilter] = useState<'ALL' | 'READY' | 'RECOVERY' | 'COMPLETED'>('ALL');
   const [expandedTask, setExpandedTask] = useState<number | null>(null);
+  const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [loading, setLoading] = useState(false);
 
   const loadTasks = async () => {
@@ -185,6 +187,13 @@ export const TaskListView: React.FC<TaskListViewProps> = ({
                     </button>
                   )}
                   <button
+                    onClick={() => setEditingTask(task)}
+                    style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: '6px' }}
+                    title="Edit task details"
+                  >
+                    <Edit3 size={15} />
+                  </button>
+                  <button
                     onClick={() => handleDeleteTask(task.id)}
                     style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: '6px' }}
                     title="Delete task"
@@ -260,6 +269,17 @@ export const TaskListView: React.FC<TaskListViewProps> = ({
           );
         })
       )}
+
+      {/* Edit Details Modal */}
+      <TaskDetailsModal
+        task={editingTask}
+        isOpen={editingTask !== null}
+        onClose={() => setEditingTask(null)}
+        onTaskUpdated={() => {
+          loadTasks();
+          setEditingTask(null);
+        }}
+      />
     </div>
   );
 };

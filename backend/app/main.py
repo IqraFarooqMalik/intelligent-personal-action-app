@@ -8,7 +8,7 @@ from app.database.base import Base
 from app.database.session import engine, AsyncSessionLocal
 from app.models import Task, TaskType, EnergyLevel, FocusLevel, CostType, LocationRequirement
 from app.services.task_service import TaskService
-from app.routers import health, tasks, recommendations, sessions, budget, activities
+from app.routers import health, tasks, recommendations, sessions, budget, activities, auth
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -87,6 +87,7 @@ app.add_middleware(
 
 # Attach Routers under /api
 app.include_router(health.router, prefix="/api")
+app.include_router(auth.router, prefix="/api")
 app.include_router(tasks.router, prefix="/api")
 app.include_router(recommendations.router, prefix="/api")
 app.include_router(sessions.router, prefix="/api")
